@@ -22,6 +22,7 @@ set(header_files
   include/plane_sweep/local_coordinate_system.h
   include/plane_sweep/perspective_camera_model.h
   include/plane_sweep/viewer_3d.h
+  include/plane_sweep/plane_sweep.h
   )
 
 set(source_files
@@ -33,7 +34,8 @@ set(source_files
   src/lab_1_2.cpp
   src/local_coordinate_system.cpp
   src/perspective_camera_model.cpp
-  src/viewer_3d.cpp src/plane_sweep.cpp include/plane_sweep/plane_sweep.h)
+  src/viewer_3d.cpp src/plane_sweep.cpp
+  )
 
 add_executable(${PROJECT_NAME} examples/main.cpp ${source_files} ${header_files})
 
