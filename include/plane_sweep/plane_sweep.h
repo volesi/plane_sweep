@@ -8,14 +8,6 @@
 #include <opencv2/core.hpp>
 #include "dataset.h"
 
-struct DepthPlane
-{
-  double depth;
-  double n_x;
-  double n_y;
-  double n_z;
-};
-
 struct DepthRange
 {
   double min;
@@ -26,22 +18,36 @@ struct DepthRange
 class PlaneSweep
 {
 public:
-  PlaneSweep();
+  PlaneSweep(Dataset images, int max_number_of_images = 3);
 
-  PlaneSweep(Dataset images);
+  PlaneSweep(std::vector<DataElement> images);
 
-  void addImage(DataElement image);
+  void setDepthNormal(const Eigen::Vector3d& depth_normal);
 
+  void setDepthRange(const DepthRange& depth_range);
 
-  cv::Mat getDepth(DepthPlane depth_plane);
+  void setReferenceImage(int image_index);
 
-  void setDepthNormal(double n_x, double n_y, double n_z);
+  void setReferenceImage(const DataElement& ref_image);
+
+  void calculateDepthImage();
 
 private:
+  Eigen::Vector3d depth_normal_; //n_m
 
-  cv::Mat getHomography(DepthPlane plane);
+  std::vector<DataElement> images_; //I_0, ..., I_k, ..., I_n
+
+  DepthRange depth_range_; //m
+
+  DataElement ref_image_;//I_ref
+
+  int ZNCC_patch_size_;
+
+  cv::Mat getHomography(Eigen::Vector3d depth_normal);
 
   cv::Mat mapTargetImgToRefImg(const cv::Mat& img, cv::Mat homography);
+
+  cv::Mat mapTargetImgToRefImg(const DataElement& image, const DataElement& ref_image);
 
   int computeSimilarity(const cv::Mat& img_ref, const cv::Mat& img_target);
 
