@@ -10,6 +10,35 @@ double getAverage(const cv::Mat& img, const cv::Point2i& kernel_centre, int kern
 double getStdDeviation(const cv::Mat& img, const cv::Point2i& kernel_centre, int kernel_size);
 }
 
+void PlaneSweep::calculateDepthImage()
+{
+  cv::Mat depth_image;
+
+  for (const auto& image : images_)
+  {
+    if(image.img_num == ref_image_.img_num)
+    { continue; }
+
+    for (double d_m = depth_range_.min; d_m < depth_range_.max; d_m += depth_range_.interval)
+    {
+
+
+    }
+    //for each depth in range{
+      //calculate d_m
+
+      //calculate homography for depth (ref_image, image)
+
+      //warp image to ref image (image, homography)
+
+      //calculate fitting score for each pixel in the warped image
+      //each pixel in the ref image get a graph og heigths
+
+    //}
+
+  }
+
+}
 
 double PlaneSweep::ZNCC(const cv::Mat& img1, const cv::Mat& img2, const cv::Point2i& kernel_centre1,
                         const cv::Point2i& kernel_centre2, int kernel_size)
@@ -34,29 +63,6 @@ double PlaneSweep::ZNCC(const cv::Mat& img1, const cv::Mat& img2, const cv::Poin
   }
 
   return sum / (std::pow(2*kernel_size + 1, 2) * std_dev1 * std_dev2);
-}
-
-void PlaneSweep::calculateDepthImage()
-{
-  cv::Mat depth_image;
-
-  for (const auto& image : images_)
-  {
-    if(image.img_num == ref_image_.img_num)
-    { continue; }
-    //for each depth in range{
-      //calculate d_m
-
-      //calculate homography for depth (ref_image, image, n_m, d_m)
-
-      //warp image to ref image (image, homography)
-
-      //calculate fitting score for each pixel in the warped image
-
-    //}
-
-  }
-
 }
 
 namespace

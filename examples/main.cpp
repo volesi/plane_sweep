@@ -1,11 +1,11 @@
-#include "../include/plane_sweep/lab_1_2.h"
+#include "../include/plane_sweep/project.h"
 #include <iostream>
 
 int main()
 {
   try
   {
-    Lab_1_2 lab;
+    Project lab;
     lab.run();
   }
   catch (const std::exception& e)

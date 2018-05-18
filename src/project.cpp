@@ -1,17 +1,18 @@
-#include "../include/plane_sweep/lab_1_2.h"
+#include "../include/plane_sweep/project.h"
 
 #include "../include/plane_sweep/dataset.h"
 #include "../include/plane_sweep/local_coordinate_system.h"
 #include "../include/plane_sweep/viewer_3d.h"
+#include "../include/plane_sweep/plane_sweep.h"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 
-Lab_1_2::Lab_1_2(const std::string& data_path)
+Project::Project(const std::string& data_path)
   : data_path_{data_path}
   , window_name_{"World point in camera"}
 {}
 
-void Lab_1_2::run()
+void Project::run()
 {
   // Set up dataset.
   Dataset dataset{data_path_};
@@ -24,6 +25,13 @@ void Lab_1_2::run()
   cv::namedWindow(window_name_);
   Viewer3D viewer;
 
+  for (DataElement element{}; dataset >> element;)
+  {
+    PlaneSweep test;
+    const auto& im = element.image;
+    std::cout<< test.ZNCC(im, im, {im.rows/2, im.rows/2}, {im.rows/2 + 1, im.rows/2 + 1}, 10) << std::endl;
+  }
+  return;
   // Process each image in the dataset.
   for (DataElement element{}; dataset >> element;)
   {
