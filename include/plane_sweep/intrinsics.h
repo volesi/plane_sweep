@@ -21,10 +21,10 @@ struct Intrinsics
   using Vector5d = Eigen::Matrix<double, 5, 1>;
 
   /// \brief Extract calibration matrix.
-  Eigen::Matrix3d toCalibrationMatrix();
+  Eigen::Matrix3d toCalibrationMatrix() const;
 
   /// \brief Extract distortion coefficients on the form [k1, k2, 0, 0, k3].
-  Vector5d toDistortionCoefficientVector();
+  Vector5d toDistortionCoefficientVector() const;
 };
 
 /// \brief Operator for reading data from stream.

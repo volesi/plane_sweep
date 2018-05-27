@@ -24,12 +24,14 @@ struct DataElement
 class Dataset
 {
 public:
-  /// \brief Constructs a Lab 1 dataset.
+  /// \brief Constructs Dataset for planesweep algorithm
   /// \param folder_name the folder where the dataset resides.
-  explicit Dataset(const std::string& folder_name)
-  : folder_name_(folder_name)
-  , curr_file_num_{first_file_num}
-  , get_succeeded_{true}
+  /// \param Vector of integers where the integers are the image numbers
+  explicit Dataset(const std::string& folder_name, std::vector<int> file_num_list)
+      : folder_name_(folder_name)
+      , file_num_list_{file_num_list}
+      , get_succeeded_{true}
+      , curr_num_list_index_{0}
   {}
 
   /// \brief Reads the next data element.
@@ -45,16 +47,16 @@ public:
   /// \return True if success.
   operator bool() const;
 
-  static constexpr int first_file_num = 502;
-  static constexpr int last_file_num = 611;
-
 private:
   void readImage(DataElement& element) const;
+
   void readMetadata(DataElement& element) const;
 
   std::string folder_name_;
-  int curr_file_num_;
   bool get_succeeded_;
+
+  std::vector<int> file_num_list_;
+  int curr_num_list_index_;
 };
 
 /// \brief Stream operator for getting the next data element.

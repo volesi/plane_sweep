@@ -18,7 +18,8 @@ struct DepthRange
 class PlaneSweep
 {
 public:
-  PlaneSweep(){};
+  PlaneSweep()
+  {};
 
   PlaneSweep(Dataset images, int max_number_of_images = 3);
 
@@ -34,7 +35,9 @@ public:
 
   void calculateDepthImage();
 
-  double ZNCC(const cv::Mat& img1, const cv::Mat& img2, const cv::Point2i& kernel_centre1, const cv::Point2i& kernel_centre2, int kernel_size);
+  double ZNCC(const cv::Mat& img_ref, const cv::Mat& img_target, int kernel_size,
+              cv::Mat avg_ref = cv::Mat(), cv::Mat stddev_ref = cv::Mat());
+
 private:
 
   Eigen::Vector3d depth_normal_; //n_m

@@ -2,12 +2,14 @@
 // Created by brage on 04.05.18.
 //
 
+#include <opencv2/imgproc.hpp>
 #include "../include/plane_sweep/plane_sweep.h"
 
-namespace
+namespace a
 {
 double getAverage(const cv::Mat& img, const cv::Point2i& kernel_centre, int kernel_size);
 double getStdDeviation(const cv::Mat& img, const cv::Point2i& kernel_centre, int kernel_size);
+cv::Mat getStdDeviation(const cv::Mat& img, int kernel_size, cv::Mat avg = cv::Mat());
 }
 
 void PlaneSweep::calculateDepthImage()
@@ -40,35 +42,45 @@ void PlaneSweep::calculateDepthImage()
 
 }
 
-double PlaneSweep::ZNCC(const cv::Mat& img1, const cv::Mat& img2, const cv::Point2i& kernel_centre1,
-                        const cv::Point2i& kernel_centre2, int kernel_size)
+double PlaneSweep::ZNCC(const cv::Mat& img_ref, const cv::Mat& img_target, int kernel_size, cv::Mat avg_ref,
+                        cv::Mat stddev_ref)
 {
-  const auto &u1 = kernel_centre1.x;
-  const auto &v1 = kernel_centre1.y;
-  const auto &u2 = kernel_centre2.x;
-  const auto &v2 = kernel_centre2.y;
+  if(avg_ref.empty())
+  { cv::blur(img_ref, avg_ref, {kernel_size, kernel_size}); }
 
-  const auto std_dev1 = getStdDeviation(img1, kernel_centre1, kernel_size);
-  const auto std_dev2 = getStdDeviation(img2, kernel_centre2, kernel_size);
-  const auto avg1 = getAverage(img1, kernel_centre1, kernel_size);
-  const auto avg2 = getAverage(img2, kernel_centre2, kernel_size);
-
-  double sum = 0;
-  for (int i = -kernel_size; i < kernel_size + 1; ++i)
+  if(stddev_ref.empty())
   {
-    for (int j = -kernel_size; j < kernel_size + 1; ++j)
-    {
-      sum += (img1.at<char>(u1+i, v1+j) - avg1)*(img2.at<char>(u2+i, v2+j) - avg2);
-    }
+
   }
 
-  return sum / (std::pow(2*kernel_size + 1, 2) * std_dev1 * std_dev2);
+//  const auto &u1 = kernel_centre1.x;
+//  const auto &v1 = kernel_centre1.y;
+//  const auto &u2 = kernel_centre2.x;
+//  const auto &v2 = kernel_centre2.y;
+
+//  const auto std_dev1 = getStdDeviation(img1, kernel_centre1, kernel_size);
+//  const auto std_dev2 = getStdDeviation(img2, kernel_centre2, kernel_size);
+//  const auto avg1 = getAverage(img1, kernel_centre1, kernel_size);
+//  const auto avg2 = getAverage(img2, kernel_centre2, kernel_size);
+
+//  double sum = 0;
+//  for (int i = -kernel_size; i < kernel_size + 1; ++i)
+//  {
+//    for (int j = -kernel_size; j < kernel_size + 1; ++j)
+//    {
+//      sum += (img_ref.at<char>(u1+i, v1+j) - avg1)*(img_target.at<char>(u2+i, v2+j) - avg2);
+//    }
+//  }
+//
+//  return sum / (std::pow(2*kernel_size + 1, 2) * std_dev1 * std_dev2);
+  return 0.;
 }
 
-namespace
+namespace a
 {
 double getAverage(const cv::Mat& img, const cv::Point2i& kernel_centre, int kernel_size)
 {
+
   double sum = 0;
   const auto &u = kernel_centre.x;
   const auto &v = kernel_centre.y;
@@ -81,6 +93,24 @@ double getAverage(const cv::Mat& img, const cv::Point2i& kernel_centre, int kern
     }
   }
   return sum / std::pow(2*kernel_size + 1, 2);
+}
+
+cv::Mat getStdDeviation(const cv::Mat& img, int kernel_size, cv::Mat avg)
+{
+  assert(kernel_size % 2 == 1); //kernel_size must be odd
+
+  if(avg.empty())
+  { cv::blur(img, avg, {kernel_size, kernel_size}); }
+  else
+  { assert(img.size == avg.size); }
+
+  cv::Mat variance;
+  cv::blur(img.mul(img), variance, {kernel_size, kernel_size});
+
+  cv::Mat stddev;
+  cv::sqrt(variance - avg.mul(avg), stddev);
+
+  return stddev;
 }
 
 double getStdDeviation(const cv::Mat& img, const cv::Point2i& kernel_centre, int kernel_size)

@@ -1,6 +1,6 @@
 #include "../include/plane_sweep/intrinsics.h"
 
-Eigen::Matrix3d Intrinsics::toCalibrationMatrix()
+Eigen::Matrix3d Intrinsics::toCalibrationMatrix() const
 {
   Eigen::Matrix3d calibration_matrix;
   calibration_matrix <<
@@ -11,7 +11,7 @@ Eigen::Matrix3d Intrinsics::toCalibrationMatrix()
   return calibration_matrix;
 }
 
-Intrinsics::Vector5d Intrinsics::toDistortionCoefficientVector()
+Intrinsics::Vector5d Intrinsics::toDistortionCoefficientVector() const
 {
   Vector5d return_value;
   return_value << k1, k2, 0, 0, k3;

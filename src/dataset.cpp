@@ -11,7 +11,7 @@ bool Dataset::getNext(DataElement& element)
     readImage(element);
     readMetadata(element);
 
-    ++curr_file_num_;
+    ++curr_num_list_index_;
     get_succeeded_ = true;
   }
 
@@ -20,7 +20,7 @@ bool Dataset::getNext(DataElement& element)
 
 bool Dataset::hasNext() const
 {
-  return curr_file_num_ <= last_file_num;
+  return curr_num_list_index_ < file_num_list_.size();
 }
 
 Dataset::operator bool() const
@@ -31,7 +31,7 @@ Dataset::operator bool() const
 void Dataset::readImage(DataElement& element) const
 {
   std::stringstream filepath;
-  filepath << folder_name_ << "110608_Oslo_0" << curr_file_num_ << ".jpg";
+  filepath << folder_name_ << "110608_Oslo_0" << file_num_list_[curr_num_list_index_] << ".jpg";
 
   element.image = cv::imread(filepath.str());
 
@@ -43,10 +43,10 @@ void Dataset::readImage(DataElement& element) const
 
 void Dataset::readMetadata(DataElement& element) const
 {
-  element.img_num = curr_file_num_;
+  element.img_num = file_num_list_[curr_num_list_index_];
 
   std::stringstream filepath;
-  filepath << folder_name_ << "110608_Oslo_0" << curr_file_num_ << ".txt";
+  filepath << folder_name_ << "110608_Oslo_0" << file_num_list_[curr_num_list_index_] << ".txt";
   std::ifstream input_file{filepath.str()};
 
   if (!input_file)
